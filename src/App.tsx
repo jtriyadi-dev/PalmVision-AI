@@ -43,11 +43,40 @@ import { PlatformMainView } from './modules/platform/PlatformMainView';
 import { ProductionLaunchMainView } from './modules/production-launch/ProductionLaunchMainView';
 import { GisMapMainView } from './modules/gis/GisMapMainView';
 import { MasterDataMainView } from './modules/master-data/MasterDataMainView';
-import { Brain, Radio, Globe2, Rocket, Globe, Database } from 'lucide-react';
+import { LandingPage } from './components/LandingPage';
+import { LoginModal } from './components/LoginModal';
+import { Brain, Radio, Globe2, Rocket, Globe, Database, LogOut, ArrowLeft, User, ShieldAlert } from 'lucide-react';
 
 export default function App() {
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; role: string; email: string; estate: string } | null>({
+    name: 'Bpk. Hendra Kusuma, M.B.A.',
+    role: 'Group CEO & Managing Director',
+    email: 'h.kusuma@nusantarapalm.co.id',
+    estate: 'Holding Headquarters (Jakarta)'
+  });
   const [activeModule, setActiveModule] = useState<string>('platform');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+
+  if (viewMode === 'landing') {
+    return (
+      <>
+        <LandingPage
+          onOpenLogin={() => setIsLoginModalOpen(true)}
+          onEnterAppDirectly={() => setViewMode('app')}
+        />
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLoginSuccess={(user) => {
+            setCurrentUser(user);
+            setViewMode('app');
+          }}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -77,17 +106,31 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs text-slate-300">
-            <Building2 className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="font-bold text-white">PT Nusantara Palm Lestari</span>
-            <span className="text-slate-500">•</span>
-            <span>Holding NPL Group</span>
-          </div>
+          <button
+            onClick={() => setViewMode('landing')}
+            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition cursor-pointer"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Kembali ke Landing Page</span>
+          </button>
 
-          <div className="px-3 py-1.5 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-800/60 text-xs font-bold flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-            <span>Prompt 16 Active (PalmVision AI v1.0 Production Launch)</span>
-          </div>
+          {currentUser && (
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-indigo-200">
+              <User className="h-4 w-4 text-indigo-400" />
+              <div className="hidden md:block">
+                <span className="font-bold text-white block text-[11px] leading-tight">{currentUser.name}</span>
+                <span className="text-[9px] text-indigo-300 block font-mono">{currentUser.role}</span>
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => setIsLoginModalOpen(true)}
+            title="Ganti Pengguna / Login"
+            className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </header>
 
