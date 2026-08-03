@@ -1,0 +1,6 @@
+{
+  "name": "PalmVision AI - Enterprise Plantation Platform",
+  "description": "Enterprise Palm Oil ERP Platform with AI Center Platform, Gemini 3.6, RAG Knowledge Base, AI Vision & OCR, Finance Accounting, HRM, EAM, Inventory, & Harvest Management",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
