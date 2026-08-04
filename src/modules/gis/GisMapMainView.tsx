@@ -8,7 +8,11 @@ import {
   Activity,
   Download,
   CheckCircle2,
-  Wifi
+  Wifi,
+  ArrowRight,
+  Radio,
+  TrendingUp,
+  Database
 } from 'lucide-react';
 import { InteractiveMapExplorerView } from './views/InteractiveMapExplorerView';
 import { BlockPolygonManagerView } from './views/BlockPolygonManagerView';
@@ -16,9 +20,11 @@ import { DroneOrthomosaicView } from './views/DroneOrthomosaicView';
 import { GpsFleetGeofencingView } from './views/GpsFleetGeofencingView';
 import { AgronomyHeatmapView } from './views/AgronomyHeatmapView';
 import { GisExportToolsView } from './views/GisExportToolsView';
+import { useEnterpriseData } from '../../context/EnterpriseDataContext';
 
 export const GisMapMainView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'explorer' | 'blocks' | 'drone' | 'gps' | 'heatmap' | 'export'>('explorer');
+  const { navigateToModule } = useEnterpriseData();
 
   return (
     <div className="space-y-6">
@@ -41,9 +47,32 @@ export const GisMapMainView: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-teal-300 bg-teal-950/60 px-3.5 py-2 rounded-xl border border-teal-800/60">
-          <Wifi className="h-4 w-4 text-teal-400 animate-pulse" />
-          <span>Realtime GIS & Satellite Feeds Active</span>
+        {/* Cross-Module Quick Jump Links */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => navigateToModule('smart-plantation')}
+            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-300 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Radio className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Lihat Telemetri IoT PKS</span>
+            <ArrowRight className="h-3 w-3" />
+          </button>
+          <button
+            onClick={() => navigateToModule('harvest')}
+            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Panen Realtime</span>
+            <ArrowRight className="h-3 w-3" />
+          </button>
+          <button
+            onClick={() => navigateToModule('master-data')}
+            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Database className="h-3.5 w-3.5 text-indigo-400" />
+            <span>Master Kebun</span>
+            <ArrowRight className="h-3 w-3" />
+          </button>
         </div>
       </div>
 

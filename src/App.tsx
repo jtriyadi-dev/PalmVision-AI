@@ -29,6 +29,16 @@ import {
   Wrench,
   Users,
   DollarSign,
+  Brain,
+  Radio,
+  Globe2,
+  Rocket,
+  Globe,
+  Database,
+  LogOut,
+  ArrowLeft,
+  User,
+  ShieldAlert
 } from 'lucide-react';
 import { PlantationMainView } from './modules/plantation/PlantationMainView';
 import { FieldOperationsMainView } from './modules/field-operations/FieldOperationsMainView';
@@ -45,9 +55,10 @@ import { GisMapMainView } from './modules/gis/GisMapMainView';
 import { MasterDataMainView } from './modules/master-data/MasterDataMainView';
 import { LandingPage } from './components/LandingPage';
 import { LoginModal } from './components/LoginModal';
-import { Brain, Radio, Globe2, Rocket, Globe, Database, LogOut, ArrowLeft, User, ShieldAlert } from 'lucide-react';
+import { RealtimeLiveHeaderBar } from './components/RealtimeLiveHeaderBar';
+import { EnterpriseDataProvider, useEnterpriseData } from './context/EnterpriseDataContext';
 
-export default function App() {
+function AppWorkspace() {
   const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<{ name: string; role: string; email: string; estate: string } | null>({
@@ -56,7 +67,8 @@ export default function App() {
     email: 'h.kusuma@nusantarapalm.co.id',
     estate: 'Holding Headquarters (Jakarta)'
   });
-  const [activeModule, setActiveModule] = useState<string>('platform');
+  
+  const { activeModule, setActiveModule } = useEnterpriseData();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   if (viewMode === 'landing') {
@@ -134,219 +146,278 @@ export default function App() {
         </div>
       </header>
 
+      {/* Real-time Ticker & Cross-Module Quick Jump Header Bar */}
+      <RealtimeLiveHeaderBar />
+
       {/* Main App Body */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar Navigation */}
         {sidebarOpen && (
-          <aside className="w-64 bg-slate-900 border-r border-slate-800 p-4 space-y-6 shrink-0 hidden md:block overflow-y-auto">
+          <aside className="w-72 bg-slate-900 border-r border-slate-800 p-4 space-y-5 shrink-0 hidden md:block overflow-y-auto">
+            {/* Quick Menu Filter Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Cari menu & fitur..."
+                onChange={(e) => {
+                  const val = e.target.value.toLowerCase();
+                  const buttons = document.querySelectorAll('.sidebar-menu-item');
+                  buttons.forEach((btn) => {
+                    const text = btn.textContent?.toLowerCase() || '';
+                    if (text.includes(val)) {
+                      (btn as HTMLElement).style.display = 'flex';
+                    } else {
+                      (btn as HTMLElement).style.display = 'none';
+                    }
+                  });
+                }}
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+
+            {/* Menu Group 1: Operasional Kebun & Agronomi */}
             <div className="space-y-1">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block px-3 mb-2">
-                Modul Utama System
-              </span>
-
-              <button
-                onClick={() => setActiveModule('release')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'release'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Rocket className="h-4 w-4 text-emerald-400" />
-                  <span>Production Release & QA</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('platform')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'platform'
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Globe2 className="h-4 w-4 text-indigo-400" />
-                  <span>Commercial SaaS Platform</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('smart-plantation')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'smart-plantation'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Radio className="h-4 w-4 text-emerald-400" />
-                  <span>Smart Plantation IoT</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('ai-center')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'ai-center'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Brain className="h-4 w-4 text-emerald-400" />
-                  <span>AI Center Enterprise</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('finance')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'finance'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <DollarSign className="h-4 w-4 text-emerald-400" />
-                  <span>Finance & Accounting</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('hrm')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'hrm'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Users className="h-4 w-4 text-emerald-400" />
-                  <span>Human Resource (HRM)</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('eam')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'eam'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Wrench className="h-4 w-4 text-purple-400" />
-                  <span>Asset & Fleet (EAM)</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
-
-              <button
-                onClick={() => setActiveModule('inventory')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                  activeModule === 'inventory'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Boxes className="h-4 w-4 text-emerald-400" />
-                  <span>Inventory & Supply Chain</span>
-                </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
-              </button>
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider">
+                  1. Operasional & Agronomi
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono">4 Fitur</span>
+              </div>
 
               <button
                 onClick={() => setActiveModule('harvest')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'harvest'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <TrendingUp className="h-4 w-4 text-emerald-400" />
                   <span>Harvest Management</span>
                 </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
 
               <button
                 onClick={() => setActiveModule('field-operations')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'field-operations'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <Activity className="h-4 w-4 text-emerald-400" />
                   <span>Field Operations</span>
                 </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
 
               <button
                 onClick={() => setActiveModule('plantation')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'plantation'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Trees className="h-4 w-4" />
+                  <Trees className="h-4 w-4 text-emerald-400" />
                   <span>Plantation Lifecycle</span>
                 </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
 
               <button
                 onClick={() => setActiveModule('gis')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'gis'
-                    ? 'bg-teal-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-teal-600 text-white shadow-lg shadow-teal-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <MapPin className="h-4 w-4 text-teal-400" />
                   <span>GIS & Digital Map</span>
                 </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+            </div>
+
+            {/* Menu Group 2: Smart Tech, IoT & AI */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">
+                  2. Smart IoT & AI Engine
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">2 Fitur</span>
+              </div>
+
+              <button
+                onClick={() => setActiveModule('smart-plantation')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'smart-plantation'
+                    ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Radio className="h-4 w-4 text-cyan-400" />
+                  <span>Smart Plantation IoT</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
 
               <button
+                onClick={() => setActiveModule('ai-center')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'ai-center'
+                    ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Brain className="h-4 w-4 text-cyan-400" />
+                  <span>AI Center Enterprise</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+            </div>
+
+            {/* Menu Group 3: Asset, Supply Chain & Corporate */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
+                  3. Supply Chain & Keuangan
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 font-mono">4 Fitur</span>
+              </div>
+
+              <button
+                onClick={() => setActiveModule('inventory')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'inventory'
+                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Boxes className="h-4 w-4 text-amber-400" />
+                  <span>Inventory & Supply Chain</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+
+              <button
+                onClick={() => setActiveModule('eam')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'eam'
+                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Wrench className="h-4 w-4 text-amber-400" />
+                  <span>Asset & Fleet (EAM)</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+
+              <button
+                onClick={() => setActiveModule('finance')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'finance'
+                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <DollarSign className="h-4 w-4 text-amber-400" />
+                  <span>Finance & Accounting</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+
+              <button
+                onClick={() => setActiveModule('hrm')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'hrm'
+                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Users className="h-4 w-4 text-amber-400" />
+                  <span>Human Resource (HRM)</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+            </div>
+
+            {/* Menu Group 4: Core & Governance */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-wider">
+                  4. Master & Platform Core
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono">3 Fitur</span>
+              </div>
+
+              <button
                 onClick={() => setActiveModule('master-data')}
-                className={`w-full p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'master-data'
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <Database className="h-4 w-4 text-indigo-400" />
                   <span>Master Data Enterprise</span>
                 </div>
-                <ChevronRight className="h-4 w-4 opacity-70" />
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+
+              <button
+                onClick={() => setActiveModule('platform')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'platform'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Globe2 className="h-4 w-4 text-indigo-400" />
+                  <span>Commercial SaaS Platform</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+
+              <button
+                onClick={() => setActiveModule('release')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'release'
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Rocket className="h-4 w-4 text-indigo-400" />
+                  <span>Production Release & QA</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                <Smartphone className="h-4 w-4" />
-                <span>Harvest & Weighbridge Ready</span>
+            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
+                <Smartphone className="h-3.5 w-3.5" />
+                <span>Terintegrasi Lintas Modul</span>
               </div>
-              <p className="text-slate-400 text-[11px]">
-                TBS Quick Entry, TPH Grading, QR Tickets, Jembatan Timbang PKS & AI Forecast.
+              <p className="text-slate-400 text-[10px] leading-relaxed">
+                Semua data panen, pabrik, keuangan, dan GPS tersinkronisasi secara real-time.
               </p>
             </div>
           </aside>
@@ -373,3 +444,10 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <EnterpriseDataProvider>
+      <AppWorkspace />
+    </EnterpriseDataProvider>
+  );
+}

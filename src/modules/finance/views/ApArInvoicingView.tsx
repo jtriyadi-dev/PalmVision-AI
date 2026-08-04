@@ -11,16 +11,39 @@ import {
   ArrowDownRight,
   CreditCard,
   FileText,
+  X
 } from 'lucide-react';
 import { INITIAL_SUPPLIER_INVOICES, INITIAL_CUSTOMER_INVOICES } from '../mockData';
 import { SupplierInvoice, CustomerInvoice } from '../types';
+import { useEnterpriseData } from '../../../context/EnterpriseDataContext';
 
 export const ApArInvoicingView: React.FC = () => {
   const [supplierInvoices, setSupplierInvoices] = useState<SupplierInvoice[]>(INITIAL_SUPPLIER_INVOICES);
   const [customerInvoices, setCustomerInvoices] = useState<CustomerInvoice[]>(INITIAL_CUSTOMER_INVOICES);
   const [activeTab, setActiveTab] = useState<'AP' | 'AR' | 'AGING'>('AP');
 
+  const { addLiveEvent } = useEnterpriseData();
+
+  // Modals state
+  const [showApModal, setShowApModal] = useState(false);
+  const [showArModal, setShowArModal] = useState(false);
+
+  // AP Form State
+  const [apSupplierName, setApSupplierName] = useState('PT Pupuk Indonesia (Persero)');
+  const [apPoRef, setApPoRef] = useState('PO-2026-0811');
+  const [apAmount, setApAmount] = useState(250000000);
+  const [apDueDate, setApDueDate] = useState('2026-08-30');
+
+  // AR Form State
+  const [arCustomerName, setArCustomerName] = useState('PT Wilmar Nabati Indonesia');
+  const [arContractRef, setArContractRef] = useState('CTR-CPO-2026-092');
+  const [arProductType, setArProductType] = useState<'CPO' | 'PALM_KERNEL' | 'SHELL'>('CPO');
+  const [arQtyTons, setArQtyTons] = useState(100);
+  const [arUnitPrice, setArUnitPrice] = useState(12450);
+  const [arDueDate, setArDueDate] = useState('2026-08-25');
+
   const handlePaySupplierInvoice = (id: string) => {
+    const target = supplierInvoices.find(i => i.id === id);
     setSupplierInvoices((prev) =>
       prev.map((inv) =>
         inv.id === id
@@ -33,10 +56,20 @@ export const ApArInvoicingView: React.FC = () => {
           : inv
       )
     );
-    alert('Pembayaran Supplier Invoice Berhasil Diposting ke Bank!');
+    if (target) {
+      addLiveEvent({
+        module: 'finance',
+        moduleLabel: 'PELUNASAN AP BANK',
+        title: `Pelunasan Hutang ${target.supplierName}`,
+        detail: `Pembayaran Lunas IDR ${target.amountIdr.toLocaleString('id-ID')} via Bank Mandiri Enterprise`,
+        severity: 'success',
+        actionLink: { module: 'finance', label: 'Lihat Finance' }
+      });
+    }
   };
 
   const handleReceiveCustomerPayment = (id: string) => {
+    const target = customerInvoices.find(i => i.id === id);
     setCustomerInvoices((prev) =>
       prev.map((inv) =>
         inv.id === id
@@ -49,7 +82,78 @@ export const ApArInvoicingView: React.FC = () => {
           : inv
       )
     );
-    alert('Penerimaan Piutang Penjualan CPO Berhasil Diposting ke Bank!');
+    if (target) {
+      addLiveEvent({
+        module: 'finance',
+        moduleLabel: 'PENERIMAAN CPO AR',
+        title: `Pembayaran CPO Masuk dari ${target.customerName}`,
+        detail: `Dana Masuk Rp ${target.amountIdr.toLocaleString('id-ID')} untuk Kontrak ${target.contractReferenceNo}`,
+        severity: 'success',
+        actionLink: { module: 'finance', label: 'Lihat Finance' }
+      });
+    }
+  };
+
+  const handleAddApInvoice = (e: React.FormEvent) => {
+    e.preventDefault();
+    const invNo = `INV-AP-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newInv: SupplierInvoice = {
+      id: `ap-${Date.now()}`,
+      invoiceNo: invNo,
+      supplierName: apSupplierName,
+      poReferenceNo: apPoRef,
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: apDueDate,
+      amountIdr: Number(apAmount),
+      paidAmountIdr: 0,
+      remainingAmountIdr: Number(apAmount),
+      status: 'UNPAID',
+      notes: 'Registrasi tagihan supplier dari form ERP',
+    };
+    setSupplierInvoices([newInv, ...supplierInvoices]);
+    setShowApModal(false);
+
+    addLiveEvent({
+      module: 'finance',
+      moduleLabel: 'INVOICE AP BARU',
+      title: `Tagihan Supplier Masuk: ${apSupplierName}`,
+      detail: `Nominal IDR ${Number(apAmount).toLocaleString('id-ID')} | Ref PO: ${apPoRef}`,
+      severity: 'warning',
+      actionLink: { module: 'finance', label: 'Cek Invoicing' }
+    });
+  };
+
+  const handleAddArInvoice = (e: React.FormEvent) => {
+    e.preventDefault();
+    const invNo = `INV-AR-${Math.floor(1000 + Math.random() * 9000)}`;
+    const totalAmount = Number(arQtyTons) * 1000 * Number(arUnitPrice);
+    const newInv: CustomerInvoice = {
+      id: `ar-${Date.now()}`,
+      invoiceNo: invNo,
+      customerName: arCustomerName,
+      contractReferenceNo: arContractRef,
+      productType: arProductType,
+      quantityTons: Number(arQtyTons),
+      unitPriceIdrPerKg: Number(arUnitPrice),
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: arDueDate,
+      amountIdr: totalAmount,
+      paidAmountIdr: 0,
+      remainingAmountIdr: totalAmount,
+      status: 'UNPAID',
+      notes: 'Tagihan penjualan CPO terbit',
+    };
+    setCustomerInvoices([newInv, ...customerInvoices]);
+    setShowArModal(false);
+
+    addLiveEvent({
+      module: 'finance',
+      moduleLabel: 'BILLING CPO TERBIT',
+      title: `Billing CPO ke ${arCustomerName}`,
+      detail: `Nilai: IDR ${totalAmount.toLocaleString('id-ID')} | Total Volume: ${arQtyTons} Ton`,
+      severity: 'info',
+      actionLink: { module: 'finance', label: 'Cek Billing CPO' }
+    });
   };
 
   return (
@@ -100,8 +204,8 @@ export const ApArInvoicingView: React.FC = () => {
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-400 font-bold">Daftar Tagihan Supplier (Account Payable)</span>
             <button
-              onClick={() => alert('Form Invoicing Supplier Baru Siap')}
-              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+              onClick={() => setShowApModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <Plus className="w-4 h-4" />
               <span>+ Register Invoice Supplier</span>
@@ -160,8 +264,8 @@ export const ApArInvoicingView: React.FC = () => {
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-400 font-bold">Daftar Tagihan Penjualan CPO & PK (Account Receivable)</span>
             <button
-              onClick={() => alert('Form Billing CPO Siap')}
-              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+              onClick={() => setShowArModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <Plus className="w-4 h-4" />
               <span>+ Terbitkan Billing Invoice CPO</span>
@@ -245,6 +349,188 @@ export const ApArInvoicingView: React.FC = () => {
               <p className="text-lg font-black text-rose-400">Rp 0 (NIL)</p>
               <p className="text-[10px] text-emerald-400 font-bold">Kualitas Kredit Sangat Baik ✓</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* AP Modal Dialog */}
+      {showApModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-emerald-500/40 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-extrabold text-white text-sm flex items-center gap-2">
+                <Plus className="h-4 w-4 text-emerald-400" />
+                <span>Input Tagihan Supplier Baru (AP)</span>
+              </h3>
+              <button onClick={() => setShowApModal(false)} className="text-slate-400 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddApInvoice} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Nama Supplier / Vendor</label>
+                <input
+                  type="text"
+                  required
+                  value={apSupplierName}
+                  onChange={e => setApSupplierName(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Nomor Referensi PO Procurement</label>
+                <input
+                  type="text"
+                  required
+                  value={apPoRef}
+                  onChange={e => setApPoRef(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Nominal Invoice Tagihan (Rp IDR)</label>
+                <input
+                  type="number"
+                  required
+                  min="1000"
+                  value={apAmount}
+                  onChange={e => setApAmount(Number(e.target.value))}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-emerald-400 font-mono font-bold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Tanggal Jatuh Tempo Pembayaran</label>
+                <input
+                  type="date"
+                  required
+                  value={apDueDate}
+                  onChange={e => setApDueDate(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowApModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 shadow"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Simpan Invoice Supplier</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* AR Modal Dialog */}
+      {showArModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-cyan-500/40 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-extrabold text-white text-sm flex items-center gap-2">
+                <Plus className="h-4 w-4 text-cyan-400" />
+                <span>Terbitkan Billing Invoice CPO (AR)</span>
+              </h3>
+              <button onClick={() => setShowArModal(false)} className="text-slate-400 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddArInvoice} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Nama Customer / Pembeli CPO</label>
+                <input
+                  type="text"
+                  required
+                  value={arCustomerName}
+                  onChange={e => setArCustomerName(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Nomor Kontrak Penjualan CPO</label>
+                <input
+                  type="text"
+                  required
+                  value={arContractRef}
+                  onChange={e => setArContractRef(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Volume (Ton)</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={arQtyTons}
+                    onChange={e => setArQtyTons(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-cyan-400 font-mono font-bold focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Harga per Kg (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    min="100"
+                    value={arUnitPrice}
+                    onChange={e => setArUnitPrice(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-mono font-bold focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-bold mb-1">Tanggal Jatuh Tempo</label>
+                <input
+                  type="date"
+                  required
+                  value={arDueDate}
+                  onChange={e => setArDueDate(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                <span className="text-slate-400">Total Tagihan Calculated:</span>
+                <strong className="text-cyan-400 font-mono text-sm">
+                  Rp {(arQtyTons * 1000 * arUnitPrice).toLocaleString('id-ID')}
+                </strong>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowArModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold flex items-center gap-1.5 shadow"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Terbitkan Invoice</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

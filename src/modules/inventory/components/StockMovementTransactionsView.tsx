@@ -21,6 +21,7 @@ import {
   StockTransferRecord,
   StockAdjustmentRecord,
 } from '../types';
+import { useEnterpriseData } from '../../../context/EnterpriseDataContext';
 
 interface StockMovementTransactionsViewProps {
   movements: InventoryMovementRecord[];
@@ -50,6 +51,8 @@ export const StockMovementTransactionsView: React.FC<StockMovementTransactionsVi
   const [trfQty, setTrfQty] = useState(50);
   const [sourceWh, setSourceWh] = useState('Gudang Utama Central Estate');
   const [destWh, setDestWh] = useState('Gudang Pupuk & Bahan Kimia Afdeling 1');
+
+  const { addLiveEvent } = useEnterpriseData();
 
   const handleCreateTransfer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +91,15 @@ export const StockMovementTransactionsView: React.FC<StockMovementTransactionsVi
       notes: 'Transfer stok antar gudang afdeling kebun.',
     };
     onAddMovement(mov);
+
+    addLiveEvent({
+      module: 'inventory',
+      moduleLabel: 'MUTASI STOK GUDANG',
+      title: `Transfer Stok: ${trfItem}`,
+      detail: `Pengeluaran ${trfQty} Karung dari ${sourceWh} ke ${destWh}`,
+      severity: 'info',
+      actionLink: { module: 'inventory', label: 'Cek Inventory' }
+    });
 
     setShowTransferModal(false);
   };
