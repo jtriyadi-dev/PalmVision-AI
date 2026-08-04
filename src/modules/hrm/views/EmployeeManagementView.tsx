@@ -29,6 +29,85 @@ export const EmployeeManagementView: React.FC = () => {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'DIRECTORY' | 'ORG_STRUCTURE'>('DIRECTORY');
 
+  // Add Employee Form Modal State
+  const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Form Fields
+  const [newEmpName, setNewEmpName] = useState('');
+  const [newEmpNik, setNewEmpNik] = useState('');
+  const [newEmpGender, setNewEmpGender] = useState<'Male' | 'Female'>('Male');
+  const [newEmpPosition, setNewEmpPosition] = useState('Pemanen TBS');
+  const [newEmpDept, setNewEmpDept] = useState('Divisi Panen & Produksi Kebun');
+  const [newEmpEstate, setNewEmpEstate] = useState('Kebun Riau 01');
+  const [newEmpStatus, setNewEmpStatus] = useState<'PERMANENT_SKU' | 'CONTRACT_BHL' | 'PROBATION'>('PERMANENT_SKU');
+  const [newEmpPhone, setNewEmpPhone] = useState('');
+  const [newEmpEmail, setNewEmpEmail] = useState('');
+  const [newEmpSalary, setNewEmpSalary] = useState(4500000);
+  const [newEmpBankName, setNewEmpBankName] = useState('Bank Mandiri');
+  const [newEmpBankAccount, setNewEmpBankAccount] = useState('');
+  const [newEmpEmergencyName, setNewEmpEmergencyName] = useState('');
+  const [newEmpEmergencyPhone, setNewEmpEmergencyPhone] = useState('');
+
+  const handleCreateEmployee = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmpName || !newEmpNik) return;
+
+    const generatedId = `EMP-2026-${Math.floor(100 + Math.random() * 900)}`;
+    const createdEmployee: Employee = {
+      id: `emp-${Date.now()}`,
+      employeeId: generatedId,
+      nik: newEmpNik || '140102' + Math.floor(1000000000 + Math.random() * 9000000000),
+      name: newEmpName,
+      gender: newEmpGender,
+      positionTitle: newEmpPosition,
+      departmentId: 'dept-01',
+      departmentName: newEmpDept,
+      estateId: 'est-01',
+      estateName: newEmpEstate,
+      employmentStatus: newEmpStatus,
+      joinDate: new Date().toISOString().split('T')[0],
+      email: newEmpEmail || `${newEmpName.toLowerCase().replace(/\s+/g, '.')}@palmvision.co.id`,
+      phone: newEmpPhone || '+62 812-7000-1122',
+      basicSalary: Number(newEmpSalary),
+      allowancesTotal: 500000,
+      bankAccount: {
+        bankName: newEmpBankName,
+        accountNumber: newEmpBankAccount || '1080009988' + Math.floor(10 + Math.random() * 90),
+        accountHolderName: newEmpName,
+      },
+      npwp: '31.452.890.1-201.000',
+      bpjsKesehatan: '000188992011',
+      bpjsKetenagakerjaan: '190288339100',
+      maritalStatus: 'K/1 (Kawin 1 Anak)',
+      education: 'SMA / SMK Sederajat',
+      supervisorName: 'Ir. Hendra Wijaya (Manager Estate)',
+      photoUrl: newEmpGender === 'Male'
+        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'
+        : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+      emergencyContact: {
+        name: newEmpEmergencyName || 'Keluarga Karyawan',
+        relationship: 'Istri / Suami',
+        phone: newEmpEmergencyPhone || '+62 813-8899-0011',
+      },
+      skills: ['Panen Egrek', 'Grading TBS', 'Safety K3'],
+    };
+
+    setEmployees((prev) => [createdEmployee, ...prev]);
+    setShowAddEmployeeModal(false);
+    setToastMessage(`Karyawan baru ${newEmpName} (${generatedId}) berhasil ditambahkan!`);
+    setTimeout(() => setToastMessage(null), 4000);
+
+    // Reset Form
+    setNewEmpName('');
+    setNewEmpNik('');
+    setNewEmpPhone('');
+    setNewEmpEmail('');
+    setNewEmpBankAccount('');
+    setNewEmpEmergencyName('');
+    setNewEmpEmergencyPhone('');
+  };
+
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -79,7 +158,7 @@ export const EmployeeManagementView: React.FC = () => {
           </div>
 
           <button
-            onClick={() => alert('Form Tambah Karyawan Baru SIAP Diisi')}
+            onClick={() => setShowAddEmployeeModal(true)}
             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
           >
             <Plus className="w-4 h-4" />
@@ -87,6 +166,16 @@ export const EmployeeManagementView: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-emerald-950 border border-emerald-700 text-emerald-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
 
       {activeSubTab === 'DIRECTORY' && (
         <div className="space-y-4">
@@ -339,6 +428,242 @@ export const EmployeeManagementView: React.FC = () => {
                 Tutup Detail
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Input Data Karyawan Baru */}
+      {showAddEmployeeModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl p-6 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div>
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                  <span>Input Data Karyawan Baru (HRM System)</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Lengkapi data profil, NIK KTP, status ketenagakerjaan, serta rekening payroll karyawan.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddEmployeeModal(false)}
+                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateEmployee} className="space-y-4 text-xs">
+              {/* Seksi 1: Identitas Personal */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                  1. Data Identitas Karyawan
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Nama Lengkap Karyawan *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Contoh: Budi Santoso"
+                      value={newEmpName}
+                      onChange={(e) => setNewEmpName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">NIK (Nomor Induk Kependudukan KTP) *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="16 Digit NIK KTP (e.g. 1401021204900001)"
+                      value={newEmpNik}
+                      onChange={(e) => setNewEmpNik(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Jenis Kelamin</label>
+                    <select
+                      value={newEmpGender}
+                      onChange={(e) => setNewEmpGender(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="Male">Laki-Laki</option>
+                      <option value="Female">Perempuan</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">No. HP / WhatsApp Active</label>
+                    <input
+                      type="text"
+                      placeholder="+62 812-3456-7890"
+                      value={newEmpPhone}
+                      onChange={(e) => setNewEmpPhone(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Seksi 2: Penugasan & Posisi */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                  2. Jabatan & Penempatan Kerja
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Jabatan / Posisi Kerja</label>
+                    <select
+                      value={newEmpPosition}
+                      onChange={(e) => setNewEmpPosition(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="Pemanen TBS">Pemanen TBS (Harvester)</option>
+                      <option value="Mandor Panen">Mandor Panen (Field Supervisor)</option>
+                      <option value="Operator Heavy Equipment">Operator Heavy Equipment (Excavator/JCB)</option>
+                      <option value="Supir Truk TBS">Supir Truk Transport TBS</option>
+                      <option value="Staff Agronomi & GIS">Staff Agronomi & GIS Specialist</option>
+                      <option value="Operator Pabrik PKS">Operator Mill Pabrik PKS</option>
+                      <option value="Asisten Kepala Estate">Asisten Kepala Estate (Askep)</option>
+                      <option value="Staff HRD & Admin">Staff HRD & General Affair</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Departemen / Divisi</label>
+                    <select
+                      value={newEmpDept}
+                      onChange={(e) => setNewEmpDept(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="Divisi Panen & Produksi Kebun">Divisi Panen & Produksi Kebun</option>
+                      <option value="Divisi Pabrik Kelapa Sawit (PKS)">Divisi Pabrik Kelapa Sawit (PKS)</option>
+                      <option value="Divisi Workshop & Teknik (EAM)">Divisi Workshop & Teknik (EAM)</option>
+                      <option value="Divisi Agronomi & Proteksi Tanaman">Divisi Agronomi & Proteksi Tanaman</option>
+                      <option value="Divisi HRD & General Affair">Divisi HRD & General Affair</option>
+                      <option value="Divisi Finance & Logistik">Divisi Finance & Logistik</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Lokasi Kebun / Unit Kerja</label>
+                    <select
+                      value={newEmpEstate}
+                      onChange={(e) => setNewEmpEstate(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="Kebun Riau 01">Kebun Riau 01 (Estate A)</option>
+                      <option value="Kebun Kaltim 02">Kebun Kaltim 02 (Estate B)</option>
+                      <option value="Kebun Sumut 04">Kebun Sumut 04 (Estate C)</option>
+                      <option value="PKS Mill 01 Riau">PKS Mill 01 Riau</option>
+                      <option value="Head Office Jakarta">Head Office Jakarta</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Status Ketenagakerjaan</label>
+                    <select
+                      value={newEmpStatus}
+                      onChange={(e) => setNewEmpStatus(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="PERMANENT_SKU">SKU Permanent (Karyawan Tetap)</option>
+                      <option value="CONTRACT_BHL">Contract BHL (Karyawan Harian Lepas)</option>
+                      <option value="PROBATION">Masa Percobaan (Probation 3 Bulan)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Seksi 3: Financial & Emergency */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                  3. Gaji, Rekening Bank & Kontak Darurat
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Gaji Pokok Standard (Rp)</label>
+                    <input
+                      type="number"
+                      value={newEmpSalary}
+                      onChange={(e) => setNewEmpSalary(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Bank Payroll</label>
+                    <select
+                      value={newEmpBankName}
+                      onChange={(e) => setNewEmpBankName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    >
+                      <option value="Bank Mandiri">Bank Mandiri</option>
+                      <option value="Bank BRI">Bank BRI</option>
+                      <option value="Bank BCA">Bank BCA</option>
+                      <option value="Bank BNI">Bank BNI</option>
+                      <option value="Bank Syariah Indonesia">Bank Syariah Indonesia (BSI)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Nomor Rekening Bank</label>
+                    <input
+                      type="text"
+                      placeholder="Nomor Rekening"
+                      value={newEmpBankAccount}
+                      onChange={(e) => setNewEmpBankAccount(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">Nama Kontak Darurat</label>
+                    <input
+                      type="text"
+                      placeholder="Nama Istri/Suami/Orang Tua"
+                      value={newEmpEmergencyName}
+                      onChange={(e) => setNewEmpEmergencyName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-slate-400 font-bold block mb-1">No. HP Kontak Darurat</label>
+                    <input
+                      type="text"
+                      placeholder="+62 812-9988-7766"
+                      value={newEmpEmergencyPhone}
+                      onChange={(e) => setNewEmpEmergencyPhone(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end items-center gap-3 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddEmployeeModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 cursor-pointer text-xs"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold cursor-pointer text-xs shadow-lg flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Simpan Data Karyawan</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

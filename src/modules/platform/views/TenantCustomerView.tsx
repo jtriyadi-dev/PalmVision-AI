@@ -14,7 +14,8 @@ import {
   CheckCircle,
   XCircle,
   Sliders,
-  Sparkles
+  Sparkles,
+  CheckCircle2
 } from 'lucide-react';
 import { mockTenants } from '../mockData';
 import { Tenant } from '../types';
@@ -23,6 +24,48 @@ export const TenantCustomerView: React.FC = () => {
   const [tenants, setTenants] = useState<Tenant[]>(mockTenants);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIsolation, setSelectedIsolation] = useState('ALL');
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Form State
+  const [tenantCode, setTenantCode] = useState('');
+  const [tenantName, setTenantName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [subdomain, setSubdomain] = useState('');
+  const [isolationMode, setIsolationMode] = useState<'SCHEMA_PER_TENANT' | 'MULTI_DB' | 'SINGLE_DB_ISOLATED'>('SCHEMA_PER_TENANT');
+  const [maxUsersLimit, setMaxUsersLimit] = useState(50);
+  const [storageLimitGb, setStorageLimitGb] = useState(250);
+
+  const handleCreateTenant = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tenantCode || !tenantName || !subdomain) return;
+
+    const created: Tenant = {
+      id: `tnt-${Date.now()}`,
+      tenantCode: tenantCode.toUpperCase(),
+      tenantName,
+      companyName: companyName || tenantName,
+      subdomain: subdomain.toLowerCase().includes('.palmvision.io') ? subdomain : `${subdomain.toLowerCase()}.palmvision.io`,
+      isolationMode,
+      activeUsersCount: 1,
+      maxUsersLimit: Number(maxUsersLimit),
+      storageUsedGb: 0.5,
+      storageLimitGb: Number(storageLimitGb),
+      status: 'ACTIVE',
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
+    setTenants([created, ...tenants]);
+    setShowAddModal(false);
+    setToastMessage(`Tenant Schema ${created.tenantCode} (${created.tenantName}) berhasil diprovisi!`);
+    setTimeout(() => setToastMessage(null), 4000);
+
+    setTenantCode('');
+    setTenantName('');
+    setCompanyName('');
+    setSubdomain('');
+  };
 
   const filteredTenants = tenants.filter(t => {
     const matchesSearch = t.tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -48,11 +91,24 @@ export const TenantCustomerView: React.FC = () => {
           </p>
         </div>
 
-        <button className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-lg flex items-center gap-2 cursor-pointer">
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-lg flex items-center gap-2 cursor-pointer shrink-0"
+        >
           <Plus className="h-4 w-4" />
           <span>Provision Tenant Schema</span>
         </button>
       </div>
+
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-indigo-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
@@ -150,6 +206,142 @@ export const TenantCustomerView: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal Provision Tenant Schema */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl max-w-lg w-full space-y-4 animate-scaleUp">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-indigo-400" />
+                <span>Provision Tenant Enterprise Baru</span>
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white cursor-pointer text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTenant} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Kode Tenant (Unique Code)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., TNT-ASTRA-01"
+                    value={tenantCode}
+                    onChange={(e) => setTenantCode(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Isolation Architecture
+                  </label>
+                  <select
+                    value={isolationMode}
+                    onChange={(e) => setIsolationMode(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden font-mono"
+                  >
+                    <option value="SCHEMA_PER_TENANT">SCHEMA_PER_TENANT</option>
+                    <option value="MULTI_DB">MULTI_DB (Dedicated PostgreSQL)</option>
+                    <option value="SINGLE_DB_ISOLATED">SINGLE_DB_ISOLATED</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Nama Tenant Enterprise
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="E.g., Astra Agro Lestari Riau Estate"
+                  value={tenantName}
+                  onChange={(e) => setTenantName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Nama Perusahaan Induk / Holding
+                </label>
+                <input
+                  type="text"
+                  placeholder="E.g., PT Astra Agro Tbk"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Subdomain Access Prefix
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="E.g., astra-riau"
+                  value={subdomain}
+                  onChange={(e) => setSubdomain(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-indigo-300 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Max User Seats Limit
+                  </label>
+                  <input
+                    type="number"
+                    value={maxUsersLimit}
+                    onChange={(e) => setMaxUsersLimit(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Storage Quota Limit (GB)
+                  </label>
+                  <input
+                    type="number"
+                    value={storageLimitGb}
+                    onChange={(e) => setStorageLimitGb(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs cursor-pointer shadow-lg"
+                >
+                  Provision Tenant
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

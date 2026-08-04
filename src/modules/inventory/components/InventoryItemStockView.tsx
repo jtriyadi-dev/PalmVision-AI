@@ -49,6 +49,7 @@ export const InventoryItemStockView: React.FC<InventoryItemStockViewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Form state
   const [code, setCode] = useState('');
@@ -101,12 +102,25 @@ export const InventoryItemStockView: React.FC<InventoryItemStockViewProps> = ({
 
     onAddItem(newItem);
     setShowAddModal(false);
+    setToastMessage(`SKU Item baru ${newItem.name} (${newItem.itemCode}) berhasil didaftarkan!`);
+    setTimeout(() => setToastMessage(null), 4000);
     setCode('');
     setName('');
   };
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      {/* Toast Alert Banner */}
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
+
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
         <div>

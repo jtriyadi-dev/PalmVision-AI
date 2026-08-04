@@ -16,8 +16,44 @@ import { AgronomyVariety, FfbGradingStandard } from '../types';
 
 export const AgronomyMasterView: React.FC = () => {
   const [varieties, setVarieties] = useState<AgronomyVariety[]>(mockAgronomyVarieties);
-  const [gradingStandards, setGradingStandards] = useState<FfbGradingStandard[]>(mockFfbGradingStandards);
+  const [gradingStandards] = useState<FfbGradingStandard[]>(mockFfbGradingStandards);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Form State
+  const [varCode, setVarCode] = useState('');
+  const [varName, setVarName] = useState('');
+  const [breeder, setBreeder] = useState('');
+  const [yieldTon, setYieldTon] = useState(30);
+  const [bunchKg, setBunchKg] = useState(16);
+  const [soilType, setSoilType] = useState('Alluvial & Mineral Soil');
+
+  const handleCreateVariety = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!varCode || !varName) return;
+
+    const created: AgronomyVariety = {
+      id: `var-${Date.now()}`,
+      varietyCode: varCode.toUpperCase(),
+      varietyName: varName,
+      breederName: breeder || 'Pusat Penelitian Kelapa Sawit (PPKS)',
+      yieldPotentialTonHa: Number(yieldTon),
+      avgBunchWeightKg: Number(bunchKg),
+      recommendedSoil: soilType,
+      status: 'CERTIFIED'
+    };
+
+    setVarieties([created, ...varieties]);
+    setShowAddModal(false);
+    setToastMessage(`Varietas Bibit Unggul ${created.varietyCode} (${created.varietyName}) berhasil didaftarkan!`);
+    setTimeout(() => setToastMessage(null), 4000);
+
+    setVarCode('');
+    setVarName('');
+    setBreeder('');
+  };
 
   const filteredVarieties = varieties.filter(v =>
     v.varietyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,7 +75,25 @@ export const AgronomyMasterView: React.FC = () => {
             Database spesifikasi keunggulan genetik DxP Tenera, estimasi potensi BJR/tonase per hektar, serta kriteria potongan mutu penerimaan TBS PKS.
           </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-lg shrink-0"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Tambah Varietas Bibit Baru</span>
+        </button>
       </div>
+
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
 
       {/* Grid: Seed Varieties & Grading Standards */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -134,6 +188,126 @@ export const AgronomyMasterView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Tambah Varietas Bibit Baru */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl max-w-lg w-full space-y-4 animate-scaleUp">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Trees className="w-5 h-5 text-emerald-400" />
+                <span>Registrasi Varietas Bibit Sawit Baru</span>
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white cursor-pointer text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateVariety} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Kode Varietas
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., DXP-TNR-08"
+                    value={varCode}
+                    onChange={(e) => setVarCode(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Produsen / Pemulia Benih
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., PPKS Medan / SOCFIN"
+                    value={breeder}
+                    onChange={(e) => setBreeder(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Nama Varietas Bibit
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="E.g., DxP Yangambi Super Yield"
+                  value={varName}
+                  onChange={(e) => setVarName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Potensi Hasil (Ton/Ha/Thn)
+                  </label>
+                  <input
+                    type="number"
+                    value={yieldTon}
+                    onChange={(e) => setYieldTon(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Rata-rata Berat Tandan (Kg)
+                  </label>
+                  <input
+                    type="number"
+                    value={bunchKg}
+                    onChange={(e) => setBunchKg(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Kesesuaian Tipologi Tanah
+                </label>
+                <input
+                  type="text"
+                  value={soilType}
+                  onChange={(e) => setSoilType(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer shadow-lg"
+                >
+                  Simpan Varietas
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

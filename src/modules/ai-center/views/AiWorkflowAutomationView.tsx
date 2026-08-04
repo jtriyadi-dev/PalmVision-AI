@@ -17,6 +17,16 @@ import { AiWorkflowRule } from '../types';
 
 export const AiWorkflowAutomationView: React.FC = () => {
   const [workflows, setWorkflows] = useState<AiWorkflowRule[]>(INITIAL_AI_WORKFLOWS);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Modal Form State
+  const [newRuleNo, setNewRuleNo] = useState('');
+  const [newRuleName, setNewRuleName] = useState('');
+  const [newTrigger, setNewTrigger] = useState('Stock Agrokimia Di Bawah Minimum');
+  const [newCondition, setNewCondition] = useState('stock_kg <= 5000');
+  const [newAiAction, setNewAiAction] = useState('Buat Draf Purchase Request (PR)');
+  const [newActionType, setNewActionType] = useState('AUTO_DRAFT_PR');
 
   const toggleStatus = (id: string) => {
     setWorkflows((prev) =>
@@ -24,6 +34,32 @@ export const AiWorkflowAutomationView: React.FC = () => {
         w.id === id ? { ...w, status: w.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' } : w
       )
     );
+  };
+
+  const handleCreateRule = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newRuleNo || !newRuleName) return;
+
+    const created: AiWorkflowRule = {
+      id: `wf-${Date.now()}`,
+      ruleNo: newRuleNo.toUpperCase(),
+      ruleName: newRuleName,
+      triggerEvent: newTrigger,
+      condition: newCondition,
+      aiAction: newAiAction,
+      actionType: newActionType,
+      status: 'ACTIVE',
+      executionCount: 0,
+      lastExecutedAt: 'Belum pernah',
+    };
+
+    setWorkflows((prev) => [created, ...prev]);
+    setShowAddModal(false);
+    setToastMessage(`AI Workflow Rule ${created.ruleNo} (${created.ruleName}) berhasil diaktifkan!`);
+    setTimeout(() => setToastMessage(null), 4000);
+
+    setNewRuleNo('');
+    setNewRuleName('');
   };
 
   return (
@@ -41,13 +77,23 @@ export const AiWorkflowAutomationView: React.FC = () => {
         </div>
 
         <button
-          onClick={() => alert('Simulasi Buat AI Workflow Builder Rule Baru')}
+          onClick={() => setShowAddModal(true)}
           className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 cursor-pointer shadow"
         >
           <Plus className="w-4 h-4" />
           <span>Buat Workflow Rule Baru</span>
         </button>
       </div>
+
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
 
       {/* Visual Workflow Steps Concept */}
       <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
@@ -133,6 +179,127 @@ export const AiWorkflowAutomationView: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Modal Buat Workflow Rule Baru */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl max-w-lg w-full space-y-4 animate-scaleUp">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Workflow className="w-5 h-5 text-indigo-400" />
+                <span>Buat AI Automation Rule Baru</span>
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white cursor-pointer text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateRule} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Rule No / Ref
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., WFR-AUTO-06"
+                    value={newRuleNo}
+                    onChange={(e) => setNewRuleNo(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Action Type
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., AUTO_DRAFT_PR"
+                    value={newActionType}
+                    onChange={(e) => setNewActionType(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Nama Workflow Rule
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="E.g., Otomatisasi Restock Pupuk NPK saat Stok Kritis"
+                  value={newRuleName}
+                  onChange={(e) => setNewRuleName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Trigger Event
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newTrigger}
+                  onChange={(e) => setNewTrigger(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-cyan-400 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Condition Logic (Expression)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCondition}
+                  onChange={(e) => setNewCondition(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-amber-400 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  AI Action Description
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newAiAction}
+                  onChange={(e) => setNewAiAction(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer shadow-lg"
+                >
+                  Aktifkan Rule
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

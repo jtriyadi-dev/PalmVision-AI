@@ -8,7 +8,8 @@ import {
   CreditCard,
   Building,
   Truck,
-  ShoppingCart
+  ShoppingCart,
+  CheckCircle2
 } from 'lucide-react';
 import { mockVendorsBuyers } from '../mockData';
 import { VendorBuyerMaster } from '../types';
@@ -16,6 +17,43 @@ import { VendorBuyerMaster } from '../types';
 export const VendorBuyerMasterView: React.FC = () => {
   const [partners, setPartners] = useState<VendorBuyerMaster[]>(mockVendorsBuyers);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Form State
+  const [partnerCode, setPartnerCode] = useState('');
+  const [partnerName, setPartnerName] = useState('');
+  const [partnerType, setPartnerType] = useState<'BUYER_CPO_PK' | 'SUPPLIER_AGROCHEMICAL' | 'TRANSPORTER_LOGISTICS'>('BUYER_CPO_PK');
+  const [contactPerson, setContactPerson] = useState('');
+  const [phone, setPhone] = useState('');
+  const [topDays, setTopDays] = useState(30);
+
+  const handleCreatePartner = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!partnerCode || !partnerName) return;
+
+    const created: VendorBuyerMaster = {
+      id: `ptn-${Date.now()}`,
+      partnerCode: partnerCode.toUpperCase(),
+      partnerName,
+      partnerType: partnerType === 'BUYER_CPO_PK' ? 'Buyer CPO & Palm Kernel' : partnerType === 'SUPPLIER_AGROCHEMICAL' ? 'Pemasok Pupuk & Agrokimia' : 'Kontraktor Transportasi & Logistik',
+      contactPerson: contactPerson || 'Tim Procurement',
+      phone: phone || '+62 811-9988-7766',
+      creditTermsDays: Number(topDays),
+      status: 'ACTIVE'
+    };
+
+    setPartners([created, ...partners]);
+    setShowAddModal(false);
+    setToastMessage(`Mitra Bisnis ${created.partnerCode} (${created.partnerName}) berhasil didaftarkan!`);
+    setTimeout(() => setToastMessage(null), 4000);
+
+    setPartnerCode('');
+    setPartnerName('');
+    setContactPerson('');
+    setPhone('');
+  };
 
   const filtered = partners.filter(p =>
     p.partnerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,7 +76,25 @@ export const VendorBuyerMasterView: React.FC = () => {
             Database mitra bisnis korporat: Pembeli CPO & Palm Kernel (Musim Mas, Wilmar), Pemasok Pupuk, serta Kontraktor Angkutan TBS/CPO.
           </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-lg shrink-0"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Tambah Mitra Bisnis Baru</span>
+        </button>
       </div>
+
+      {toastMessage && (
+        <div className="p-4 rounded-xl bg-sky-950 border border-sky-800 text-sky-300 text-xs font-bold flex items-center justify-between shadow-lg animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-sky-400 hover:text-white cursor-pointer text-sm font-bold">✕</button>
+        </div>
+      )}
 
       <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
         <div className="flex items-center justify-between">
@@ -90,6 +146,129 @@ export const VendorBuyerMasterView: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Modal Tambah Mitra Bisnis Baru */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl max-w-lg w-full space-y-4 animate-scaleUp">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Building className="w-5 h-5 text-sky-400" />
+                <span>Registrasi Mitra Bisnis / Buyer CPO Baru</span>
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white cursor-pointer text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePartner} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Kode Mitra (Partner Code)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="E.g., VND-WLM-09"
+                    value={partnerCode}
+                    onChange={(e) => setPartnerCode(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Kategori Mitra
+                  </label>
+                  <select
+                    value={partnerType}
+                    onChange={(e) => setPartnerType(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                  >
+                    <option value="BUYER_CPO_PK">Buyer CPO & Palm Kernel</option>
+                    <option value="SUPPLIER_AGROCHEMICAL">Pemasok Pupuk & Agrokimia</option>
+                    <option value="TRANSPORTER_LOGISTICS">Kontraktor Transportasi & Logistik</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Nama Perusahaan / Partner
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="E.g., PT Wilmar Nabati Indonesia"
+                  value={partnerName}
+                  onChange={(e) => setPartnerName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    Contact Person
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="E.g., Bpk. Bambang Setiawan"
+                    value={contactPerson}
+                    onChange={(e) => setContactPerson(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                    No Telepon HP / WhatsApp
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="E.g., +62 812-3456-7890"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-white font-mono text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                  Termin Pembayaran TOP (Hari)
+                </label>
+                <input
+                  type="number"
+                  value={topDays}
+                  onChange={(e) => setTopDays(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-800 bg-slate-950 text-emerald-400 font-mono text-xs focus:ring-2 focus:ring-sky-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs cursor-pointer shadow-lg"
+                >
+                  Simpan Partner
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

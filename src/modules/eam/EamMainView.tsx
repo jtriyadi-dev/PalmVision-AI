@@ -70,9 +70,14 @@ export const EamMainView: React.FC = () => {
   const [correctiveList, setCorrectiveList] = useState<CorrectiveWorkOrder[]>(mockCorrectiveWorkOrders);
   const [assignmentsList, setAssignmentsList] = useState<AssetAssignment[]>(mockAssetAssignments);
   const [inspectionsList, setInspectionsList] = useState<AssetInspection[]>(mockAssetInspections);
+  const [fleetVehiclesList, setFleetVehiclesList] = useState<FleetVehicle[]>(mockFleetVehicles);
 
   const handleAddAsset = (newAsset: AssetItem) => {
     setAssetsList((prev) => [newAsset, ...prev]);
+  };
+
+  const handleAddVehicle = (newVeh: FleetVehicle) => {
+    setFleetVehiclesList((prev) => [newVeh, ...prev]);
   };
 
   const handleAddAssignment = (newAsg: AssetAssignment) => {
@@ -112,7 +117,7 @@ export const EamMainView: React.FC = () => {
       {activeSubTab === 'dashboard' && (
         <AssetDashboardView
           assets={assetsList}
-          vehicles={mockFleetVehicles}
+          vehicles={fleetVehiclesList}
           heavyEquipment={mockHeavyEquipment}
           workshopJobs={jobOrdersList}
           preventivePlans={preventiveList}
@@ -162,9 +167,10 @@ export const EamMainView: React.FC = () => {
 
       {activeSubTab === 'fleet' && (
         <FleetHeavyEquipmentView
-          vehicles={mockFleetVehicles}
+          vehicles={fleetVehiclesList}
           heavyEquipment={mockHeavyEquipment}
           utilizationLogs={mockEquipmentUtilizationLogs}
+          onAddVehicle={handleAddVehicle}
         />
       )}
 
