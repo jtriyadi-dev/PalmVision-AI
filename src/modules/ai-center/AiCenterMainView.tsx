@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav } from '../../components/ScrollableSubNav';
 import {
   Brain,
   Activity,
@@ -62,27 +63,13 @@ export const AiCenterMainView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Sub-navigation Header Pills */}
-      <div className="bg-slate-900/90 border border-slate-800/80 backdrop-blur-md p-2 rounded-2xl shadow-xl overflow-x-auto scrollbar-none sticky top-0 z-20">
-        <div className="flex items-center gap-1.5 min-w-max">
-          {subTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeSubTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveSubTab(tab.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 cursor-pointer transition-all ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/40 scale-[1.02]'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="bg-slate-900/90 border border-slate-800/80 backdrop-blur-md p-2 rounded-2xl shadow-xl sticky top-0 z-20">
+        <ScrollableSubNav
+          items={subTabs}
+          activeId={activeSubTab}
+          onChange={(id) => setActiveSubTab(id)}
+          activeColorClass="bg-emerald-600 text-white shadow-lg shadow-emerald-950/40"
+        />
       </div>
 
       {/* View Content Renderer */}

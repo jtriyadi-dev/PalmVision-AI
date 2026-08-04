@@ -38,8 +38,10 @@ import {
   LogOut,
   ArrowLeft,
   User,
-  ShieldAlert
+  ShieldAlert,
+  Crown
 } from 'lucide-react';
+import { ExecutiveMainView } from './modules/executive/ExecutiveMainView';
 import { PlantationMainView } from './modules/plantation/PlantationMainView';
 import { FieldOperationsMainView } from './modules/field-operations/FieldOperationsMainView';
 import { HarvestMainView } from './modules/harvest/HarvestMainView';
@@ -176,13 +178,38 @@ function AppWorkspace() {
               />
             </div>
 
-            {/* Menu Group 1: Operasional Kebun & Agronomi */}
+            {/* Menu Group 0: Eksekutif & Direksi */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
+                  0. Eksekutif & Direksi
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 font-mono">C-Suite</span>
+              </div>
+
+              <button
+                onClick={() => setActiveModule('executive')}
+                className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                  activeModule === 'executive'
+                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Crown className="h-4 w-4 text-amber-400" />
+                  <span>Dashboard Eksekutif & Direksi</span>
+                </div>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              </button>
+            </div>
+
+            {/* Menu Group 1: Panen & Agronomi Kebun */}
             <div className="space-y-1">
               <div className="flex items-center justify-between px-3 mb-1.5">
                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider">
-                  1. Operasional & Agronomi
+                  1. Panen & Agronomi Kebun
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono">4 Fitur</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono">3 Modul</span>
               </div>
 
               <button
@@ -229,6 +256,16 @@ function AppWorkspace() {
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
+            </div>
+
+            {/* Menu Group 2: Peta GIS & Spasial */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-teal-400 uppercase tracking-wider">
+                  2. Peta GIS & Spasial
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-teal-950 text-teal-300 font-mono">1 Modul</span>
+              </div>
 
               <button
                 onClick={() => setActiveModule('gis')}
@@ -246,13 +283,13 @@ function AppWorkspace() {
               </button>
             </div>
 
-            {/* Menu Group 2: Smart Tech, IoT & AI */}
+            {/* Menu Group 3: Smart IoT & AI Engine */}
             <div className="space-y-1">
               <div className="flex items-center justify-between px-3 mb-1.5">
                 <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">
-                  2. Smart IoT & AI Engine
+                  3. Smart IoT & AI Engine
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">2 Fitur</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">2 Modul</span>
               </div>
 
               <button
@@ -286,13 +323,13 @@ function AppWorkspace() {
               </button>
             </div>
 
-            {/* Menu Group 3: Asset, Supply Chain & Corporate */}
+            {/* Menu Group 4: Rantai Pasok & Gudang */}
             <div className="space-y-1">
               <div className="flex items-center justify-between px-3 mb-1.5">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
-                  3. Supply Chain & Keuangan
+                  4. Logistik & Aset Enterprise
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 font-mono">4 Fitur</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 font-mono">2 Modul</span>
               </div>
 
               <button
@@ -324,17 +361,27 @@ function AppWorkspace() {
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
+            </div>
+
+            {/* Menu Group 5: Keuangan & Sumber Daya Manusia */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between px-3 mb-1.5">
+                <span className="text-[10px] font-black text-sky-400 uppercase tracking-wider">
+                  5. Keuangan & Human Capital
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 font-mono">2 Modul</span>
+              </div>
 
               <button
                 onClick={() => setActiveModule('finance')}
                 className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'finance'
-                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    ? 'bg-sky-600 text-white shadow-lg shadow-sky-950/50'
                     : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <DollarSign className="h-4 w-4 text-amber-400" />
+                  <DollarSign className="h-4 w-4 text-sky-400" />
                   <span>Finance & Accounting</span>
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
@@ -344,25 +391,25 @@ function AppWorkspace() {
                 onClick={() => setActiveModule('hrm')}
                 className={`sidebar-menu-item w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
                   activeModule === 'hrm'
-                    ? 'bg-amber-600 text-white shadow-lg shadow-amber-950/50'
+                    ? 'bg-sky-600 text-white shadow-lg shadow-sky-950/50'
                     : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Users className="h-4 w-4 text-amber-400" />
+                  <Users className="h-4 w-4 text-sky-400" />
                   <span>Human Resource (HRM)</span>
                 </div>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </button>
             </div>
 
-            {/* Menu Group 4: Core & Governance */}
+            {/* Menu Group 6: Master & Platform Core */}
             <div className="space-y-1">
               <div className="flex items-center justify-between px-3 mb-1.5">
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-wider">
-                  4. Master & Platform Core
+                  6. Master Data & Platform Core
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono">3 Fitur</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono">3 Modul</span>
               </div>
 
               <button
@@ -425,6 +472,7 @@ function AppWorkspace() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+          {activeModule === 'executive' && <ExecutiveMainView />}
           {activeModule === 'release' && <ProductionLaunchMainView />}
           {activeModule === 'platform' && <PlatformMainView />}
           {activeModule === 'smart-plantation' && <SmartPlantationMainView />}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav } from '../../components/ScrollableSubNav';
 import {
   LayoutDashboard,
   FileSpreadsheet,
@@ -39,27 +40,13 @@ export const FinanceMainView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Navigation Subtabs */}
-      <div className="bg-slate-900 border border-slate-800 p-2 rounded-2xl overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-1 min-w-max">
-          {subTabs.map((tab) => {
-            const IconComp = tab.icon;
-            const isActive = activeSubTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveSubTab(tab.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-lg'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                }`}
-              >
-                <IconComp className={`w-4 h-4 ${isActive ? 'text-white' : 'text-emerald-400'}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="bg-slate-900 border border-slate-800 p-2 rounded-2xl">
+        <ScrollableSubNav
+          items={subTabs}
+          activeId={activeSubTab}
+          onChange={(id) => setActiveSubTab(id)}
+          activeColorClass="bg-emerald-600 text-white shadow-lg"
+        />
       </div>
 
       {/* Subtab View Router */}

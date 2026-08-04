@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav } from '../../components/ScrollableSubNav';
 import {
   Activity,
   FileText,
@@ -76,8 +77,11 @@ import { AIOperationAssistantView } from './components/AIOperationAssistantView'
 import { FieldApiDocsView } from './components/FieldApiDocsView';
 import { Prompt8RoadmapView } from './components/Prompt8RoadmapView';
 
+import { useEnterpriseData } from '../../context/EnterpriseDataContext';
+
 export const FieldOperationsMainView: React.FC = () => {
   const [subTab, setSubTab] = useState<string>('field-dashboard');
+  const { addLiveEvent } = useEnterpriseData();
 
   // Local state for all records
   const [workOrders, setWorkOrders] = useState<WorkOrderRecord[]>(INITIAL_WORK_ORDERS);
@@ -99,6 +103,14 @@ export const FieldOperationsMainView: React.FC = () => {
   // Callbacks
   const handleAddWorkOrder = (wo: WorkOrderRecord) => {
     setWorkOrders([wo, ...workOrders]);
+    addLiveEvent({
+      module: 'field-operations',
+      moduleLabel: 'FIELD WORK ORDER',
+      title: `WO Terbit: ${wo.title}`,
+      detail: `Mandor: ${wo.mandorName} | Lokasi: ${wo.blockCode} (${wo.estateName})`,
+      severity: 'info',
+      actionLink: { module: 'field-operations', label: 'Buka Work Order' }
+    });
   };
 
   const handleUpdateWOStatus = (id: string, newStatus: WorkOrderStatus) => {
@@ -109,6 +121,14 @@ export const FieldOperationsMainView: React.FC = () => {
 
   const handleAddDailyActivity = (act: DailyActivityRecord) => {
     setDailyActivities([act, ...dailyActivities]);
+    addLiveEvent({
+      module: 'field-operations',
+      moduleLabel: 'KEGIATAN LAPANGAN',
+      title: `Laporan Lapangan: ${act.activityType}`,
+      detail: `Pencatatan oleh ${act.mandorName} di ${act.blockCode} | Luas: ${act.outputHectare} Ha`,
+      severity: 'success',
+      actionLink: { module: 'field-operations', label: 'Cek Laporan' }
+    });
   };
 
   const handleTriggerSync = () => {
@@ -164,27 +184,13 @@ export const FieldOperationsMainView: React.FC = () => {
         </div>
 
         {/* Submenu Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-2 scrollbar-none border-t border-slate-100 dark:border-slate-800">
-          {subMenus.map((menu) => {
-            const Icon = menu.icon;
-            const isActive = subTab === menu.id;
-            return (
-              <button
-                key={menu.id}
-                onClick={() => setSubTab(menu.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : menu.highlight
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                    : 'bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{menu.label}</span>
-              </button>
-            );
-          })}
+        <div className="border-t border-slate-100 dark:border-slate-800 pt-1">
+          <ScrollableSubNav
+            items={subMenus}
+            activeId={subTab}
+            onChange={(id) => setSubTab(id)}
+            activeColorClass="bg-emerald-600 text-white shadow-md"
+          />
         </div>
       </div>
 

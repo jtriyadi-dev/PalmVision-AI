@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav, TabItem } from '../../components/ScrollableSubNav';
 import {
   Database,
   Building2,
@@ -16,6 +17,13 @@ import { VendorBuyerMasterView } from './views/VendorBuyerMasterView';
 
 export const MasterDataMainView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'company' | 'agronomy' | 'warehouse' | 'vendor'>('company');
+
+  const masterTabs: TabItem[] = [
+    { id: 'company', label: 'Struktur Holding & Kebun/PKS', icon: Building2 },
+    { id: 'agronomy', label: 'Master Varietas Bibit & Gradasi TBS', icon: Trees },
+    { id: 'warehouse', label: 'SKU Material, Pupuk & Sparepart', icon: Package },
+    { id: 'vendor', label: 'Master Buyer CPO, Vendor & Transporter', icon: Users },
+  ];
 
   return (
     <div className="space-y-6">
@@ -45,54 +53,13 @@ export const MasterDataMainView: React.FC = () => {
       </div>
 
       {/* Submenu Navigation Bar */}
-      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-2 shadow-lg flex items-center gap-1 overflow-x-auto scrollbar-none">
-        <button
-          onClick={() => setActiveTab('company')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-            activeTab === 'company'
-              ? 'bg-indigo-600 text-white shadow-md'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Building2 className="h-4 w-4 text-indigo-300" />
-          <span>Struktur Holding & Kebun/PKS</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('agronomy')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-            activeTab === 'agronomy'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Trees className="h-4 w-4 text-emerald-300" />
-          <span>Master Varietas Bibit & Gradasi TBS</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('warehouse')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-            activeTab === 'warehouse'
-              ? 'bg-amber-600 text-white shadow-md'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Package className="h-4 w-4 text-amber-300" />
-          <span>SKU Material, Pupuk & Sparepart</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('vendor')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-            activeTab === 'vendor'
-              ? 'bg-sky-600 text-white shadow-md'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Users className="h-4 w-4 text-sky-300" />
-          <span>Master Buyer CPO, Vendor & Transporter</span>
-        </button>
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-2 shadow-lg">
+        <ScrollableSubNav
+          items={masterTabs}
+          activeId={activeTab}
+          onChange={(id) => setActiveTab(id as any)}
+          activeColorClass="bg-indigo-600 text-white shadow-md"
+        />
       </div>
 
       {/* Active Tab View Rendering */}

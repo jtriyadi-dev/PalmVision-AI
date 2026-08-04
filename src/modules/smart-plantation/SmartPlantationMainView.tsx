@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav } from '../../components/ScrollableSubNav';
 import {
   Cpu,
   Radio,
@@ -73,25 +74,13 @@ export const SmartPlantationMainView: React.FC = () => {
       </div>
 
       {/* Navigation Submenu Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-slate-800">
-        {navItems.map(item => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
-                isActive
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/40'
-                  : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+      <div className="border-b border-slate-800 pb-1">
+        <ScrollableSubNav
+          items={navItems}
+          activeId={activeTab}
+          onChange={(id) => setActiveTab(id)}
+          activeColorClass="bg-emerald-600 text-white shadow-lg shadow-emerald-900/40"
+        />
       </div>
 
       {/* Main Tab Content View Switcher */}

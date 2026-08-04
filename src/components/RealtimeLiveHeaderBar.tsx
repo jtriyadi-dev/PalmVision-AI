@@ -44,6 +44,7 @@ export const RealtimeLiveHeaderBar: React.FC = () => {
   const [quickSearch, setQuickSearch] = useState('');
 
   const modulesList = [
+    { key: 'harvest', label: 'Pos Timbangan PKS (Weighbridge)', icon: Scale, category: 'Operations' },
     { key: 'platform', label: 'Commercial SaaS', icon: Globe2, category: 'Core Platform' },
     { key: 'master-data', label: 'Master Data Enterprise', icon: Database, category: 'Core Platform' },
     { key: 'smart-plantation', label: 'Smart Plantation IoT', icon: Radio, category: 'Operations' },

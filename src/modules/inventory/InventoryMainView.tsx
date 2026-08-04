@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav, TabItem } from '../../components/ScrollableSubNav';
 import {
   Boxes,
   LayoutDashboard,
@@ -136,6 +137,20 @@ export const InventoryMainView: React.FC = () => {
     setPurchaseOrders([po, ...purchaseOrders]);
   };
 
+  const inventoryTabs: TabItem[] = [
+    { id: 'dashboard', label: 'Dashboard Executive', icon: LayoutDashboard },
+    { id: 'warehouses', label: 'Gudang, Zona & Rak', icon: Building2 },
+    { id: 'catalog', label: 'SKU Barang & Stok', icon: Package },
+    { id: 'movements', label: 'Mutasi & Transaksi', icon: ArrowRightLeft },
+    { id: 'opname', label: 'Mobile Stock Opname', icon: Scan },
+    { id: 'procurement', label: 'Procurement & Approval', icon: ShoppingBag },
+    { id: 'suppliers', label: 'Evaluasi Vendor', icon: Award },
+    { id: 'analytics', label: 'Valuation & Forecast', icon: BarChart3 },
+    { id: 'ai', label: 'AI Intelligence', icon: BrainCircuit },
+    { id: 'api', label: 'API & DB Schema', icon: Server },
+    { id: 'prompt10', label: 'Roadmap Prompt 10', icon: Truck },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Top Main Navigation Header */}
@@ -171,127 +186,13 @@ export const InventoryMainView: React.FC = () => {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-slate-200 dark:border-slate-800">
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'dashboard'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <LayoutDashboard className="h-4 w-4" /> Dashboard Executive
-        </button>
-
-        <button
-          onClick={() => setActiveTab('warehouses')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'warehouses'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Building2 className="h-4 w-4" /> Gudang, Zona & Rak
-        </button>
-
-        <button
-          onClick={() => setActiveTab('catalog')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'catalog'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Package className="h-4 w-4" /> SKU Barang & Stok
-        </button>
-
-        <button
-          onClick={() => setActiveTab('movements')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'movements'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <ArrowRightLeft className="h-4 w-4" /> Mutasi & Transaksi
-        </button>
-
-        <button
-          onClick={() => setActiveTab('opname')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'opname'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Scan className="h-4 w-4" /> Mobile Stock Opname
-        </button>
-
-        <button
-          onClick={() => setActiveTab('procurement')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'procurement'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <ShoppingBag className="h-4 w-4" /> Procurement & Approval
-        </button>
-
-        <button
-          onClick={() => setActiveTab('suppliers')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'suppliers'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Award className="h-4 w-4" /> Evaluasi Vendor
-        </button>
-
-        <button
-          onClick={() => setActiveTab('analytics')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'analytics'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <BarChart3 className="h-4 w-4" /> Valuation & Demand Forecast
-        </button>
-
-        <button
-          onClick={() => setActiveTab('ai')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'ai'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <BrainCircuit className="h-4 w-4 text-emerald-400" /> AI Intelligence
-        </button>
-
-        <button
-          onClick={() => setActiveTab('api')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'api'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Server className="h-4 w-4" /> API & DB Schema
-        </button>
-
-        <button
-          onClick={() => setActiveTab('prompt10')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === 'prompt10'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-              : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-          }`}
-        >
-          <Truck className="h-4 w-4 text-indigo-400" /> Roadmap Prompt 10
-        </button>
+      <div className="border-b border-slate-200 dark:border-slate-800 pb-1">
+        <ScrollableSubNav
+          items={inventoryTabs}
+          activeId={activeTab}
+          onChange={(id) => setActiveTab(id as any)}
+          activeColorClass="bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+        />
       </div>
 
       {/* Main Tab Render */}

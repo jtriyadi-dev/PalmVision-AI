@@ -63,68 +63,68 @@ export const HarvestDashboardView: React.FC<HarvestDashboardViewProps> = ({
       {/* Top Banner KPI Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Today Harvest Achievement */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-slate-500">
+        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-slate-400">
             <span className="text-xs font-bold uppercase tracking-wider">Hasil Panen Hari Ini</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
               <TrendingUp className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            184.5 <span className="text-xs font-bold text-emerald-600">Ton TBS</span>
+          <div className="text-2xl font-black text-white">
+            184.5 <span className="text-xs font-bold text-emerald-400">Ton TBS</span>
           </div>
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-slate-500">Target Hari Ini: 200 Ton</span>
-            <span className="font-extrabold text-emerald-600 dark:text-emerald-400">92.25% Achievement</span>
+            <span className="text-slate-400">Target Hari Ini: 200 Ton</span>
+            <span className="font-extrabold text-emerald-400">92.25% Achievement</span>
           </div>
         </div>
 
         {/* Average BJR & Janjang */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-slate-500">
+        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-slate-400">
             <span className="text-xs font-bold uppercase tracking-wider">Rata-rata BJR & Janjang</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold">
               <Scale className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
-            {avgBjr} <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Kg/Janjang</span>
+          <div className="text-2xl font-black text-blue-400">
+            {avgBjr} <span className="text-xs font-bold text-slate-300">Kg/Janjang</span>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500">
+          <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span>Total Janjang: {totalBunches.toLocaleString('id-ID')}</span>
             <span>Brondolan: {totalLooseFruitKg} Kg</span>
           </div>
         </div>
 
         {/* Harvest Teams & Productivity */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-slate-500">
+        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-slate-400">
             <span className="text-xs font-bold uppercase tracking-wider">Regu Panen & Produktivitas</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">
               <Users className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            18 / 20 <span className="text-xs font-bold text-amber-600">Regu On Duty</span>
+          <div className="text-2xl font-black text-white">
+            18 / 20 <span className="text-xs font-bold text-amber-400">Regu On Duty</span>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500">
+          <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span>Produktivitas: 1.85 Ton/Pemanen</span>
-            <span className="text-emerald-600 font-bold">+5.2% vs Std</span>
+            <span className="text-emerald-400 font-bold">+5.2% vs Std</span>
           </div>
         </div>
 
         {/* Weighbridge & Transport Status */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-slate-500">
+        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-slate-400">
             <span className="text-xs font-bold uppercase tracking-wider">Timbang PKS & Pengiriman</span>
-            <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold">
               <Truck className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
-            {completedWeighedTon.toFixed(2)} <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Ton Netto</span>
+          <div className="text-2xl font-black text-indigo-400">
+            {completedWeighedTon.toFixed(2)} <span className="text-xs font-bold text-slate-300">Ton Netto</span>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500">
+          <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span>In Transit: {pendingTransportCount} Truk</span>
             <span>Antri Timbang: {pendingWeighingCount} Truk</span>
           </div>
@@ -232,13 +232,13 @@ export const HarvestDashboardView: React.FC<HarvestDashboardViewProps> = ({
       </div>
 
       {/* Today Executions Table Preview */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+      <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">
+            <h3 className="font-bold text-white text-base">
               Pencatatan Panen Real-Time Hari Ini (TPH & Pemanen)
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               Integrasi GPS lokasi ancak, foto geo-tag, BJR, dan pencatatan brondolan
             </p>
           </div>
@@ -251,9 +251,9 @@ export const HarvestDashboardView: React.FC<HarvestDashboardViewProps> = ({
           </button>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-slate-800">
+        <div className="overflow-x-auto rounded-xl border border-slate-800">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
               <tr>
                 <th className="px-4 py-3 font-bold">Kode Exec / Jam</th>
                 <th className="px-4 py-3 font-bold">Blok / Ancak</th>
@@ -264,30 +264,30 @@ export const HarvestDashboardView: React.FC<HarvestDashboardViewProps> = ({
                 <th className="px-4 py-3 font-bold">Kualitas</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-800 bg-slate-900/50">
               {executions.map((e) => (
-                <tr key={e.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                  <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-white">
+                <tr key={e.id} className="hover:bg-slate-800/40 transition-colors">
+                  <td className="px-4 py-3.5 font-bold text-white">
                     <div>{e.executionCode}</div>
                     <span className="text-[10px] text-slate-400 font-mono">{e.time}</span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{e.blockCode}</span>
-                    <span className="text-[10px] text-slate-500 block">{e.ancakNo}</span>
+                    <span className="font-bold text-emerald-400">{e.blockCode}</span>
+                    <span className="text-[10px] text-slate-400 block">{e.ancakNo}</span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <div className="font-bold text-slate-800 dark:text-slate-200">{e.harvesterName}</div>
+                    <div className="font-bold text-slate-200">{e.harvesterName}</div>
                     <span className="text-[10px] text-slate-400">{e.teamName}</span>
                   </td>
-                  <td className="px-4 py-3.5 font-black text-slate-900 dark:text-white">
+                  <td className="px-4 py-3.5 font-black text-white">
                     {e.bunchesCount} Tandan
                   </td>
-                  <td className="px-4 py-3.5 font-bold text-emerald-600 dark:text-emerald-400">
+                  <td className="px-4 py-3.5 font-bold text-emerald-400">
                     {e.estimatedWeightKg.toLocaleString('id-ID')} Kg
                   </td>
                   <td className="px-4 py-3.5 font-bold">{e.calculatedBjrKg} Kg</td>
                   <td className="px-4 py-3.5">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">
                       {e.qualityGrade}
                     </span>
                   </td>

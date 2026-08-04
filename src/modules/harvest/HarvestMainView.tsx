@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav } from '../../components/ScrollableSubNav';
 import {
   LayoutDashboard,
   Calendar,
@@ -128,44 +129,30 @@ export const HarvestMainView: React.FC = () => {
   return (
     <div className="space-y-6 pb-16">
       {/* Top Main Title & Submenu Navigation Pills */}
-      <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4">
+      <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
           <div>
-            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-xs uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
               PalmVision Enterprise Suite • Prompt 8
             </div>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-2xl font-black text-white tracking-tight">
               Harvest Management System & Weighbridge
             </h1>
           </div>
 
-          <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-xs font-bold w-fit">
+          <span className="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-bold w-fit">
             GIS & Weighbridge Connected
           </span>
         </div>
 
         {/* Horizontal Scroll Submenu Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
-          {subMenus.map((m) => {
-            const Icon = m.icon;
-            const isActive = activeSubTab === m.id;
-            return (
-              <button
-                key={m.id}
-                onClick={() => setActiveSubTab(m.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'
-                }`}
-              >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span>{m.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        <ScrollableSubNav
+          items={subMenus}
+          activeId={activeSubTab}
+          onChange={(id) => setActiveSubTab(id)}
+          activeColorClass="bg-emerald-600 text-white shadow-xs"
+        />
       </div>
 
       {/* Render Active Submenu Content */}

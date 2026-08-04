@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 
 import { HarvestExecutionRecord } from '../types';
+import { useEnterpriseData } from '../../../context/EnterpriseDataContext';
 
 interface HarvestExecutionViewProps {
   executions: HarvestExecutionRecord[];
@@ -21,6 +22,7 @@ export const HarvestExecutionView: React.FC<HarvestExecutionViewProps> = ({
   executions,
   onAddExecution,
 }) => {
+  const { addLiveEvent } = useEnterpriseData();
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Form input state
@@ -64,6 +66,14 @@ export const HarvestExecutionView: React.FC<HarvestExecutionViewProps> = ({
       notes,
     };
     onAddExecution(newExec);
+    addLiveEvent({
+      module: 'harvest',
+      moduleLabel: 'INPUT PANEN TBS',
+      title: `Hasil Panen: ${bunchesCount} Janjang (${calculatedWeight} Kg)`,
+      detail: `Pemanen: ${harvesterName} | Blok: ${blockCode} (${estateName})`,
+      severity: 'success',
+      actionLink: { module: 'harvest', label: 'Cek Hasil Panen' }
+    });
     setIsFormOpen(false);
   };
 

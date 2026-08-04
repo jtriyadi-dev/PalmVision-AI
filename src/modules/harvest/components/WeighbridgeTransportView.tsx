@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav, TabItem } from '../../../components/ScrollableSubNav';
 import {
   Scale,
   Truck,
@@ -16,6 +17,7 @@ import {
   TransportDispatchRecord,
   MillDeliveryRecord,
 } from '../types';
+import { useEnterpriseData } from '../../../context/EnterpriseDataContext';
 
 interface WeighbridgeTransportViewProps {
   weighbridgeRecords: WeighbridgeRecord[];
@@ -32,6 +34,7 @@ export const WeighbridgeTransportView: React.FC<WeighbridgeTransportViewProps> =
   onAddWeighbridge,
   onAddDispatch,
 }) => {
+  const { addLiveEvent } = useEnterpriseData();
   const [activeTab, setActiveTab] = useState<'weighbridge' | 'dispatch' | 'mill'>('weighbridge');
   const [isWbModalOpen, setIsWbModalOpen] = useState(false);
 
@@ -64,6 +67,16 @@ export const WeighbridgeTransportView: React.FC<WeighbridgeTransportViewProps> =
       qrCodeTicket: `QR-${ticketNo}`,
     };
     onAddWeighbridge(newWb);
+
+    addLiveEvent({
+      module: 'mill',
+      moduleLabel: 'POS TIMBANGAN PKS',
+      title: `Tiket Timbang Selesai: ${ticketNo}`,
+      detail: `Truk ${truckNo} (${driverName}) | Netto TBS: ${netWeightKg.toLocaleString('id-ID')} Kg | Asal: ${supplierEstate}`,
+      severity: 'success',
+      actionLink: { module: 'harvest', label: 'Buka Pos Timbangan' }
+    });
+
     setIsWbModalOpen(false);
   };
 
@@ -81,44 +94,24 @@ export const WeighbridgeTransportView: React.FC<WeighbridgeTransportViewProps> =
           </p>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-            <button
-              onClick={() => setActiveTab('weighbridge')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'weighbridge'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500'
-              }`}
-            >
-              Jembatan Timbang ({weighbridgeRecords.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('dispatch')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'dispatch'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500'
-              }`}
-            >
-              Dispatch Truk ({dispatches.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('mill')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'mill'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500'
-              }`}
-            >
-              Delivery to Mill ({deliveries.length})
-            </button>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+          <div className="flex-1 min-w-0">
+            <ScrollableSubNav
+              items={[
+                { id: 'weighbridge', label: `Jembatan Timbang (${weighbridgeRecords.length})`, icon: Scale },
+                { id: 'dispatch', label: `Dispatch Truk (${dispatches.length})`, icon: Truck },
+                { id: 'mill', label: `Delivery to Mill (${deliveries.length})`, icon: Building2 },
+              ]}
+              activeId={activeTab}
+              onChange={(id) => setActiveTab(id as any)}
+              activeColorClass="bg-emerald-600 text-white shadow-md"
+            />
           </div>
 
           {activeTab === 'weighbridge' && (
             <button
               onClick={() => setIsWbModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer ml-auto sm:ml-0"
+              className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0 ml-auto sm:ml-0"
             >
               <Plus className="h-4 w-4" />
               <span>Input Penimbangan</span>

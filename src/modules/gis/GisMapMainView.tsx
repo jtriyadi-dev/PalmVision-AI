@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScrollableSubNav, TabItem } from '../../components/ScrollableSubNav';
 import {
   Globe,
   Layers,
@@ -25,6 +26,15 @@ import { useEnterpriseData } from '../../context/EnterpriseDataContext';
 export const GisMapMainView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'explorer' | 'blocks' | 'drone' | 'gps' | 'heatmap' | 'export'>('explorer');
   const { navigateToModule } = useEnterpriseData();
+
+  const gisTabs: TabItem[] = [
+    { id: 'explorer', label: 'Interactive Map Explorer', icon: Globe },
+    { id: 'blocks', label: 'Block Polygons Registry', icon: Layers },
+    { id: 'drone', label: 'Drone Orthomosaic & AI Tree Stand', icon: Plane },
+    { id: 'gps', label: 'Live GPS Fleet & Geofencing', icon: Navigation },
+    { id: 'heatmap', label: 'Ganoderma & Agronomy Heatmap', icon: Activity },
+    { id: 'export', label: 'GeoJSON & Spatial Exports', icon: Download },
+  ];
 
   return (
     <div className="space-y-6">
@@ -77,80 +87,13 @@ export const GisMapMainView: React.FC = () => {
       </div>
 
       {/* Navigation Submenu Tabs */}
-      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-2 shadow-lg flex items-center justify-between gap-1 overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-1.5 min-w-max">
-          <button
-            onClick={() => setActiveTab('explorer')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'explorer'
-                ? 'bg-teal-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Globe className="h-4 w-4 text-teal-300" />
-            <span>Interactive Map Explorer</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('blocks')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'blocks'
-                ? 'bg-teal-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Layers className="h-4 w-4 text-teal-300" />
-            <span>Block Polygons Registry</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('drone')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'drone'
-                ? 'bg-sky-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Plane className="h-4 w-4 text-sky-300" />
-            <span>Drone Orthomosaic & AI Tree Stand</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('gps')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'gps'
-                ? 'bg-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Navigation className="h-4 w-4 text-indigo-300" />
-            <span>Live GPS Fleet & Geofencing</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('heatmap')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'heatmap'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Activity className="h-4 w-4 text-amber-300" />
-            <span>Ganoderma & Agronomy Heatmap</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('export')}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 cursor-pointer ${
-              activeTab === 'export'
-                ? 'bg-teal-600 text-white shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Download className="h-4 w-4 text-teal-300" />
-            <span>GeoJSON & Spatial Exports</span>
-          </button>
-        </div>
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-2 shadow-lg">
+        <ScrollableSubNav
+          items={gisTabs}
+          activeId={activeTab}
+          onChange={(id) => setActiveTab(id as any)}
+          activeColorClass="bg-teal-600 text-white shadow-md"
+        />
       </div>
 
       {/* View Switcher Body */}
