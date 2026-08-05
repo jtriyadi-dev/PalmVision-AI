@@ -136,7 +136,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin, onEnterAp
         </div>
 
         {/* Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-300">
+        <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-300">
+          <a href="#benefits" className="hover:text-emerald-400 transition text-emerald-400 font-bold">Manfaat Aplikasi</a>
           <a href="#features" className="hover:text-emerald-400 transition">Fitur Unggulan</a>
           <a href="#roi" className="hover:text-emerald-400 transition">Kalkulator ROI</a>
           <a href="#gis" className="hover:text-emerald-400 transition">GIS & Drone AI</a>
@@ -245,6 +246,146 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin, onEnterAp
             <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl backdrop-blur">
               <span className="text-2xl md:text-3xl font-black text-amber-400 font-mono block">Rp 42.8 M</span>
               <span className="text-xs text-slate-400 font-semibold mt-1 block">Total Penghematan Klien</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CORE BENEFITS SECTION */}
+      <section id="benefits" className="py-20 bg-slate-900/60 border-t border-slate-900 relative">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12">
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <span className="px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30 uppercase tracking-widest inline-flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Manfaat Strategis untuk Perkebunan & PKS</span>
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Mengapa Perusahaan Perkebunan Kelapa Sawit Memilih PalmVision AI™?
+            </h2>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              PalmVision AI menyatukan seluruh mata rantai bisnis dari lapangan (estate) hingga pabrik kelapa sawit (PKS) dan manajemen holding dalam satu platform inteligensi terpadu.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Benefit Card 1 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-mono font-black">
+                  +1.8% OER BOOST
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">1. Peningkatan Rendemen OER PKS</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Algoritma AI Vision melakukan grading otomatis tingkat kematangan TBS di loading ramp PKS. Mengeliminasi penerimaan buah mentah & tandan busuk, sehingga mendongkrak ekstraksi minyak CPO hingga <strong className="text-emerald-400">+1.8% s/d +2.5%</strong>.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Grading Mutu TBS berbasis Foto AI Kamera Ramp</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Pengurangan Potongan Mutu Tidak Proporsional</li>
+              </ul>
+            </div>
+
+            {/* Benefit Card 2 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                  <Scale className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-amber-950 border border-amber-800 text-amber-300 text-[10px] font-mono font-black">
+                  ZERO FRAUD
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">2. Nol Kebocoran Timbangan & SPB TBS</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Integrasi sensor timbangan jembatan IoT, OCR Kamera Plat Nomor Truk, serta verifikasi Digital Surat Pengantar Buah (SPB) mencegah manipulasi tonase TBS di gerbang PKS secara total.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" /> Automatic Lock Weight tanpa Input Manual Operator</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" /> Deteksi Dini Selisih Berat Kebun vs Berat Timbangan PKS</li>
+              </ul>
+            </div>
+
+            {/* Benefit Card 3 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-sky-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:scale-110 transition-transform">
+                  <Cpu className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-[10px] font-mono font-black">
+                  -18% COST PUPUK
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">3. Efisiensi Biaya Pupuk & Presisi Agronomi</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Pemetaan NDVI Drone & Satelit menganalisis kesehatan tajuk pohon sawit secara individu. Menghasilkan peta dosis pemupukan variabel yang menghemat pengeluaran pupuk kimia hingga <strong className="text-sky-400">18% per hektar</strong>.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" /> Rekomendasi Dosis Pupuk Spesifik per Blok Kebun</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" /> Peringatan Serangan Hama Ulat Kantung & Ganoderma</li>
+              </ul>
+            </div>
+
+            {/* Benefit Card 4 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                  <Radio className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-indigo-950 border border-indigo-800 text-indigo-300 text-[10px] font-mono font-black">
+                  BLANKSPOT PROOF
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">4. Aplikasi Mobile Mandor 100% Offline</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Aplikasi PWA Mandor & Asisten Lapangan dirancang khusus untuk kondisi pedalaman tanpa sinyal seluler (blankspot). Data absensi, BJR, dan pancangan panen tersimpan aman di HP dan tersinkron otomatis saat ada jaringan.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" /> Pencatatan Panen Cepat Tanpa Tergantung Koneksi</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" /> Perhitungan Premi Panen & Gaji Borongan Real-Time</li>
+              </ul>
+            </div>
+
+            {/* Benefit Card 5 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                  <FileCheck2 className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-purple-950 border border-purple-800 text-purple-300 text-[10px] font-mono font-black">
+                  EUDR & RSPO READY
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">5. Sertifikasi EUDR & Keterlacakan Ekspor</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Fitur GIS Polygon Mapping otomatis menghasilkan data geopositioning sertifikasi bebas deforestasi sesuai standar EUDR Uni Eropa, RSPO, ISPO, serta ISCC untuk kemudahan audit ekspor CPO.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" /> Geo-Coordinates Polygon per Blok Kebun Petani & Inti</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" /> Laporan Audit Traceability Siap Unduh (Format GeoJSON/PDF)</li>
+              </ul>
+            </div>
+
+            {/* Benefit Card 6 */}
+            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 space-y-4 shadow-xl hover:-translate-y-1 group">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                  <BarChart3 className="h-6 w-6" />
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-mono font-black">
+                  EXECUTIVE C-LEVEL
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-white">6. Dashboard Keuangan & C-Level Real-Time</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Konsolidasi laporan keuangan holding, HPP per kg CPO, arus kas (Cash Flow), serta evaluasi kinerja per kebun (estate) dalam satu tampilan dashboard BI yang diperbarui secara instan.
+              </p>
+              <ul className="space-y-1.5 pt-2 text-[11px] text-slate-300 border-t border-slate-800/80">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Laba Rugi (P&L) Real-Time per PT & Anak Perusahaan</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Asisten Virtual AI Gemini 3.6 untuk Analisis Kebijakan CEO</li>
+              </ul>
             </div>
           </div>
         </div>
